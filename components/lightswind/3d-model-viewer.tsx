@@ -106,7 +106,7 @@ const ObjContent: FC<{ url: string; onLoaded: () => void }> = ({
   const obj = useLoader(OBJLoader as unknown as any, url);
   useLayoutEffect(() => {
     if (obj) {
-      obj.traverse((o) => {
+      obj.traverse((o: THREE.Mesh<THREE.BufferGeometry<THREE.NormalBufferAttributes, THREE.BufferGeometryEventMap>, THREE.Material<THREE.MaterialEventMap> | THREE.Material<THREE.MaterialEventMap>[], THREE.Object3DEventMap>) => {
         if ((o as THREE.Mesh).isMesh) {
           o.castShadow = true;
           o.receiveShadow = true;
