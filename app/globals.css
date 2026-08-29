@@ -1,59 +1,36 @@
 @import "tailwindcss";
 @plugin 'lightswind/plugin';
-:root {
-  /* --hero-bg:
-    radial-gradient(
-      ellipse 65% 75% at 50% 48%,
-      #c8c5c0 0%,
-      #d4d1cc 35%,
-      #dedad6 58%,
-      #e8e4e0 78%,
-      #f0ece8 100%
-    ),
-    linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.08) 0%,
-      transparent 20%,
-      transparent 80%,
-      rgba(0, 0, 0, 0.08) 100%
-    ); */
 
-  --hero-bg:
-    radial-gradient(
-      ellipse 65% 75% at 50% 48%,
-      #48494d 0%,
-      #3d3e42 35%,
-      #303136 58%,
-      #242529 78%,
-      #1d1e22 100%
-    ),
-    linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.28) 0%,
-      transparent 20%,
-      transparent 80%,
-      rgba(0, 0, 0, 0.28) 100%
-    );
+:root {
+  --color-text-primary: #1A1A1A;
+  --color-text-secondary: #918981;
+
+  --hero-bg: radial-gradient(
+    ellipse 50% 55% at 50% 42%,
+    #c8c5c0 0%,
+    #d4d1cc 38%,
+    #dedad6 62%,
+    #f0ece8 85%
+  );
+
+  
 }
 
 .dark {
-  --hero-bg:
-    radial-gradient(
+  --color-text-primary: #E8DCC8;
+  --color-text-secondary: #918981;
+
+  --hero-bg: radial-gradient(
       ellipse 65% 75% at 50% 48%,
       #48494d 0%,
       #3d3e42 35%,
       #303136 58%,
       #242529 78%,
       #1d1e22 100%
-    ),
-    linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.28) 0%,
-      transparent 20%,
-      transparent 80%,
-      rgba(0, 0, 0, 0.28) 100%
-    );
+  );
 }
+
+
 
 .hero-bg {
   background: var(--hero-bg);

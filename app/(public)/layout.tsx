@@ -7,6 +7,9 @@ import {
   Inter,
   Bebas_Neue,
 } from "next/font/google";
+import ThemeWatcher from "@/components/theme-watcher";
+import Navbar from "@/components/navbar";
+
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -42,7 +45,7 @@ export const metadata: Metadata = {
   title: "Dayane OROU",
   description: "Dev Portfolio",
   icons: {
-    icon: [{ url: "/logoBeninTravel.png", sizes: "any" }],
+    icon: [{ url: "/dayaneorou.png", sizes: "any" }],
   },
 };
 
@@ -57,6 +60,8 @@ export default function RootLayout({
       className={`${russoOne.variable} ${montserrat.variable} ${geist.variable} ${inter.variable} ${bebas.variable}`}
     >
       <body className="min-h-screen antialiased  flex flex-col">
+        <ThemeWatcher />
+        <Navbar />
         {children}
       </body>
     </html>
