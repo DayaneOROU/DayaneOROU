@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   title: "Dayane OROU",
   description: "Dev Portfolio",
   icons: {
-    icon: [{ url: "/dayaneorou.png", sizes: "any" }],
+    icon: [{ url: "/dayaneorouN.png", sizes: "any" }],
   },
 };
 
@@ -59,7 +59,7 @@ export default function RootLayout({
       lang="fr"
       className={`${russoOne.variable} ${montserrat.variable} ${geist.variable} ${inter.variable} ${bebas.variable}`}
     >
-      <body className="min-h-screen antialiased  flex flex-col">
+      <body className="min-h-screen antialiased  flex flex-col ">
         <ThemeWatcher />
         <Navbar />
         {children}
