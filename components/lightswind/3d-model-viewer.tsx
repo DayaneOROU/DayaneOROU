@@ -4,17 +4,12 @@ import {
   OrbitControls,
   useGLTF,
   useFBX,
-  Html,
   Environment,
   ContactShadows,
   Center,
 } from "@react-three/drei";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
 import * as THREE from "three";
-
-// ---
-// Types and Constants
-// ---
 
 export interface ViewerProps {
   url: string;
@@ -42,6 +37,8 @@ export interface ViewerProps {
   autoRotate?: boolean;
   autoRotateSpeed?: number;
   onModelLoaded?: () => void;
+  // nouvelle prop — contrôle externe des events
+  interactive?: boolean;
 }
 
 const isTouch =
@@ -50,19 +47,7 @@ const isTouch =
 
 const deg2rad = (d: number) => (d * Math.PI) / 180;
 
-// ---
-// Reusable Components
-// ---
-
-const Loader: FC = () => {
-  return null;
-};
-
-// Component for handling GLTF/GLB models
-const GltfContent: FC<{ url: string; onLoaded: () => void }> = ({
-  url,
-  onLoaded,
-}) => {
+const GltfContent: FC<{ url: string; onLoaded: () => void }> = ({ url, onLoaded }) => {
   const { scene } = useGLTF(url);
   useLayoutEffect(() => {
     if (scene) {
@@ -78,11 +63,7 @@ const GltfContent: FC<{ url: string; onLoaded: () => void }> = ({
   return <primitive object={scene} />;
 };
 
-// Component for handling FBX models
-const FbxContent: FC<{ url: string; onLoaded: () => void }> = ({
-  url,
-  onLoaded,
-}) => {
+const FbxContent: FC<{ url: string; onLoaded: () => void }> = ({ url, onLoaded }) => {
   const fbx = useFBX(url);
   useLayoutEffect(() => {
     if (fbx) {
@@ -98,11 +79,7 @@ const FbxContent: FC<{ url: string; onLoaded: () => void }> = ({
   return <primitive object={fbx} />;
 };
 
-// Component for handling OBJ models
-const ObjContent: FC<{ url: string; onLoaded: () => void }> = ({
-  url,
-  onLoaded,
-}) => {
+const ObjContent: FC<{ url: string; onLoaded: () => void }> = ({ url, onLoaded }) => {
   const obj = useLoader(OBJLoader as unknown as any, url);
   useLayoutEffect(() => {
     if (obj) {
@@ -127,25 +104,21 @@ const SceneContent: FC<{
   const modelRef = useRef<THREE.Group>(null!);
   const ext = url.split(".").pop()?.toLowerCase();
 
-  useFrame((state, delta) => {
+  useFrame((_state, delta) => {
     if (autoRotate && modelRef.current) {
       modelRef.current.rotation.y += (autoRotateSpeed || 1) * delta;
     }
   });
 
-  const onLoadedHandler = () => {
-    onLoaded?.();
-  };
-
   const ModelComponent = () => {
     switch (ext) {
       case "glb":
       case "gltf":
-        return <GltfContent url={url} onLoaded={onLoadedHandler} />;
+        return <GltfContent url={url} onLoaded={() => onLoaded?.()} />;
       case "fbx":
-        return <FbxContent url={url} onLoaded={onLoadedHandler} />;
+        return <FbxContent url={url} onLoaded={() => onLoaded?.()} />;
       case "obj":
-        return <ObjContent url={url} onLoaded={onLoadedHandler} />;
+        return <ObjContent url={url} onLoaded={() => onLoaded?.()} />;
       default:
         return null;
     }
@@ -159,10 +132,6 @@ const SceneContent: FC<{
     </Center>
   );
 };
-
-// ---
-// Main Viewer Component
-// ---
 
 const ModelViewer: FC<ViewerProps> = ({
   url,
@@ -181,6 +150,8 @@ const ModelViewer: FC<ViewerProps> = ({
   autoRotate = false,
   autoRotateSpeed = 0.35,
   onModelLoaded,
+  // par défaut false — le parent Hero contrôle ça
+  interactive = false,
 }) => {
   useEffect(() => void useGLTF.preload(url), [url]);
 
@@ -188,6 +159,8 @@ const ModelViewer: FC<ViewerProps> = ({
     <div style={{ width, height }} className="relative">
       <Canvas
         shadows
+        // quand pas interactif → le canvas laisse passer tous les events au DOM
+        style={{ pointerEvents: interactive ? "auto" : "none" }}
         camera={{
           fov: 50,
           position: [0, 0, defaultZoom],
@@ -199,7 +172,7 @@ const ModelViewer: FC<ViewerProps> = ({
           outputColorSpace: THREE.SRGBColorSpace,
         }}
       >
-        <Suspense fallback={<Loader />}>
+        <Suspense fallback={null}>
           <SceneContent
             url={url}
             autoRotate={autoRotate}
@@ -213,30 +186,18 @@ const ModelViewer: FC<ViewerProps> = ({
         )}
 
         <ambientLight intensity={ambientIntensity} />
-        <directionalLight
-          position={[5, 5, 5]}
-          intensity={keyLightIntensity}
-          castShadow
-        />
-        <directionalLight
-          position={[-5, 2, 5]}
-          intensity={fillLightIntensity}
-        />
+        <directionalLight position={[5, 5, 5]} intensity={keyLightIntensity} castShadow />
+        <directionalLight position={[-5, 2, 5]} intensity={fillLightIntensity} />
         <directionalLight position={[0, 4, -5]} intensity={rimLightIntensity} />
 
-        <ContactShadows
-          position={[0, -0.5, 0]}
-          opacity={0.35}
-          scale={10}
-          blur={2}
-        />
+        <ContactShadows position={[0, -0.5, 0]} opacity={0.35} scale={10} blur={2} />
 
         <OrbitControls
           makeDefault
           enablePan={false}
           enableDamping={false}
-          enableRotate={enableManualRotation}
-          enableZoom={enableManualZoom}
+          enableRotate={interactive && enableManualRotation}
+          enableZoom={false}
           minDistance={minZoomDistance}
           maxDistance={maxZoomDistance}
           autoRotate={isTouch ? false : autoRotate}
