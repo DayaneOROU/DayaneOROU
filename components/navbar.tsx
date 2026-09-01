@@ -104,9 +104,11 @@ export default function Navbar() {
               })}
             </div>
             <div>
-              <ShinyButton className="rounded-4xl bg-amber-100 py-2 px-3 ">
-                <a href="" className="text-gray-900 font-bold ">UNE IDEE DE PROJET ?</a>
-              </ShinyButton>
+                <ShinyButton className="rounded-4xl bg-amber-100 py-2 px-3 ">
+                  <a href="" className="text-gray-900 font-bold ">
+                    UNE IDEE DE PROJET ?
+                  </a>
+                </ShinyButton>
             </div>
           </div>
         </div>
