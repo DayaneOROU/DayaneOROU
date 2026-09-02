@@ -6,10 +6,17 @@ import {
   Russo_One,
   Inter,
   Bebas_Neue,
+  Kalam
 } from "next/font/google";
 import ThemeWatcher from "@/components/theme-watcher";
 import Navbar from "@/components/navbar";
 
+const kalam = Kalam({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-kalam",
+  display: "swap",
+});
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -57,7 +64,7 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${russoOne.variable} ${montserrat.variable} ${geist.variable} ${inter.variable} ${bebas.variable}`}
+      className={`${russoOne.variable} ${montserrat.variable} ${geist.variable} ${inter.variable} ${bebas.variable} ${kalam.variable} `}
     >
       <body className="min-h-screen antialiased  flex flex-col ">
         <ThemeWatcher />

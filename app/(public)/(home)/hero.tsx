@@ -99,7 +99,7 @@ export default function Hero() {
         </svg>
       </div>
 
-      <RetroGrid />
+      {/* <RetroGrid /> */}
     </section>
   );
 }

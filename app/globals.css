@@ -6,7 +6,7 @@
 @plugin 'lightswind/plugin';
 
 :root {
-  --color-text-primary: #1A1A1A;
+  --color-text-primary: #1a1a1a;
   --color-text-secondary: #918981;
 
   --hero-bg: radial-gradient(
@@ -80,20 +80,19 @@
   --sidebar-border: oklch(0.922 0 0);
 
   --sidebar-ring: oklch(0.708 0 0);
-
 }
 
 .dark {
-  --color-text-primary: #E8DCC8;
+  --color-text-primary: #e8dcc8;
   --color-text-secondary: #918981;
 
   --hero-bg: radial-gradient(
-      ellipse 65% 75% at 50% 48%,
-      #48494d 0%,
-      #3d3e42 35%,
-      #303136 58%,
-      #242529 78%,
-      #1d1e22 100%
+    ellipse 65% 75% at 50% 48%,
+    #48494d 0%,
+    #3d3e42 35%,
+    #303136 58%,
+    #242529 78%,
+    #1d1e22 100%
   );
 
   --background: oklch(0.145 0 0);
@@ -176,17 +175,25 @@
   .font-bebas {
     font-family: var(--font-bebas), sans-serif;
   }
+  .font-kalam {
+    font-family: "Kalam", cursive;
+    font-weight: 700;
+    font-style: normal;
+  }
   * {
     @apply border-border outline-ring/50;
-
   }
   body {
     @apply bg-background text-foreground;
-
   }
   html {
     @apply font-sans;
+  }
+}
 
+@layer components {
+  [data-stacked-content][data-stacked-covered] {
+    transform-origin: 50% 0%;
   }
 }
 
@@ -231,5 +238,4 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
-
 }

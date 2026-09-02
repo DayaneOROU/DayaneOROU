@@ -2,6 +2,7 @@
 
 import Hero from "./(home)/hero";
 import About from "./(home)/about";
+import Projects from './(home)/projects'
 import VerticalTiles from "@/components/animata/preloader/vertical-tiles";
 import StackedSections from "@/components/StackedSections";
 
@@ -13,6 +14,8 @@ export default function page() {
         <Hero />
         <About />
       </StackedSections>
+      {/* <Projects/> */}
+      
       {/* </VerticalTiles> */}
     </>
   );

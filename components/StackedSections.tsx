@@ -6,6 +6,7 @@ import {
   useLayoutEffect,
   useRef,
 } from "react";
+
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -27,33 +28,106 @@ export default function StackedSections({
 
     if (!container) return;
 
-    const sections = Array.from(
-      container.querySelectorAll<HTMLElement>(
-        "[data-stacked-section]"
-      )
+    const sections = gsap.utils.toArray<HTMLElement>(
+      "[data-stacked-section]",
+      container
     );
 
     if (sections.length < 2) return;
 
     const ctx = gsap.context(() => {
-      sections.forEach((section, index) => {
-        if (index === sections.length - 1) return;
+      const mm = gsap.matchMedia();
 
-        const nextSection = sections[index + 1];
+      // ============================================================
+      // DESKTOP / TABLET
+      // ============================================================
+      mm.add("(min-width: 768px)", () => {
+        sections.forEach((section, index) => {
+          const nextSection = sections[index + 1];
 
-        gsap.to(section, {
-          scale: 0.92,
-          filter: "blur(6px)",
-          opacity: 0.65,
+          if (!nextSection) return;
 
-          ease: "none",
+          // État initial
+          gsap.set(section, {
+            scale: 1,
+            opacity: 1,
+            y: 0,
+            transformOrigin: "center center",
+            force3D: true,
+          });
 
-          scrollTrigger: {
-            trigger: nextSection,
-            start: "top bottom",
-            end: "top top",
-            scrub: true,
-          },
+          gsap.to(section, {
+            scale: 0.70,
+            opacity: 0.72,
+            y: -8,
+
+            ease: "none",
+
+            scrollTrigger: {
+              trigger: nextSection,
+
+              // La transition commence dès que
+              // la nouvelle section entre dans l'écran
+              start: "top bottom",
+
+              // Elle se termine lorsque la nouvelle
+              // section arrive complètement en haut
+              end: "top top",
+
+              scrub: 0.8,
+
+              invalidateOnRefresh: true,
+            },
+          });
+        });
+      });
+
+      // ============================================================
+      // MOBILE
+      // ============================================================
+      mm.add("(max-width: 767px)", () => {
+        sections.forEach((section, index) => {
+          const nextSection = sections[index + 1];
+
+          if (!nextSection) return;
+
+          gsap.set(section, {
+            scale: 1,
+            opacity: 1,
+            y: 0,
+            transformOrigin: "center center",
+            force3D: true,
+          });
+
+          gsap.to(section, {
+            scale: 0.985,
+            opacity: 0.9,
+
+            ease: "none",
+
+            scrollTrigger: {
+              trigger: nextSection,
+              start: "top bottom",
+              end: "top top",
+
+              scrub: 0.5,
+
+              invalidateOnRefresh: true,
+            },
+          });
+        });
+      });
+
+      // ============================================================
+      // ACCESSIBILITÉ
+      // ============================================================
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        sections.forEach((section) => {
+          gsap.set(section, {
+            scale: 1,
+            opacity: 1,
+            y: 0,
+          });
         });
       });
     }, container);
@@ -64,12 +138,19 @@ export default function StackedSections({
   return (
     <div
       ref={containerRef}
-      className={`relative ${className}`}
+      className={`relative isolate ${className}`}
     >
       {Children.map(children, (child, index) => (
         <section
           data-stacked-section
-          className="sticky top-0 h-screen w-full overflow-hidden"
+          className="
+            sticky
+            top-0
+            h-screen
+            w-full
+            overflow-hidden
+            will-change-transform
+          "
           style={{
             zIndex: index + 1,
           }}
