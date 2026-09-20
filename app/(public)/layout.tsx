@@ -9,7 +9,6 @@ import {
   Kalam
 } from "next/font/google";
 import ThemeWatcher from "@/components/theme-watcher";
-import Navbar from "@/components/navbar";
 
 const kalam = Kalam({
   subsets: ["latin"],
@@ -64,11 +63,10 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${russoOne.variable} ${montserrat.variable} ${geist.variable} ${inter.variable} ${bebas.variable} ${kalam.variable} `}
+      className={`${russoOne.variable} ${montserrat.variable} ${geist.variable} ${inter.variable} ${bebas.variable} ${kalam.variable}`}
     >
-      <body className="min-h-screen antialiased  flex flex-col ">
+      <body className="min-h-screen antialiased">
         <ThemeWatcher />
-        <Navbar />
         {children}
       </body>
     </html>
