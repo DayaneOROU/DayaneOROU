@@ -3,6 +3,7 @@
 import { House, FolderOpenDot, FilePen, User } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { ShinyButton } from "@/components/ui/shiny-button";
+import { HamburgerMenuOverlay } from "@/components/lightswind/hamburger-menu-overlay";
 
 const links = [
   { label: "Accueil", href: "/", icon: House },
@@ -10,6 +11,8 @@ const links = [
   { label: "Blogs", href: "/blogs", icon: FilePen },
   { label: "Contacts", href: "/contact", icon: User },
 ];
+
+const menuItems = links.map(({ label, href }) => ({ label, href }));
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -47,11 +50,13 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-[100] pointer-events-none ">
+      <header className="fixed top-0 left-0 right-0 z-[100]">
         <div className="flex justify-center">
           <div
             className={`
-                px-25 flex justify-between
+                px-6
+                md:px-6
+                lg:px-25 flex justify-between
                 items-center
                 text-gray-700
                 bg-gray-100           
@@ -63,7 +68,8 @@ export default function Navbar() {
                 ? `
                 mt-4
                 w-[calc(100%-32px)]
-                max-w-5xl
+                md:max-w-3xl
+                lg:max-w-5xl
                 rounded-3xl
                 bg-white/85
                 backdrop-blur-xl
@@ -91,7 +97,7 @@ export default function Navbar() {
                 />
               </>
             </div>
-            <div className="flex justify-between gap-5 font-inter text-primary">
+            <div className="flex flex-row hidden md:flex justify-between gap-5 font-inter text-primary">
               {links.map((link) => {
                 const Icon = link.icon;
 
@@ -104,11 +110,14 @@ export default function Navbar() {
               })}
             </div>
             <div>
-                <ShinyButton className="rounded-4xl bg-amber-100 py-2 px-3 ">
-                  <a href="" className="text-gray-900 font-bold ">
-                    UNE IDEE DE PROJET ?
-                  </a>
-                </ShinyButton>
+              <ShinyButton className="rounded-4xl bg-amber-100 py-2 px-3 ">
+                <a href="" className="text-gray-900 font-bold ">
+                  UNE IDEE DE PROJET ?
+                </a>
+              </ShinyButton>
+            </div>
+            <div className="hidden w-10">
+              <HamburgerMenuOverlay items={menuItems} />
             </div>
           </div>
         </div>

@@ -156,10 +156,9 @@ const ModelViewer: FC<ViewerProps> = ({
   useEffect(() => void useGLTF.preload(url), [url]);
 
   return (
-    <div style={{ width, height }} className="relative">
+    <div style={{ width, height }} className="relative ">
       <Canvas
         shadows
-        // quand pas interactif → le canvas laisse passer tous les events au DOM
         style={{ pointerEvents: interactive ? "auto" : "none" }}
         camera={{
           fov: 50,

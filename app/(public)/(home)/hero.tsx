@@ -37,26 +37,26 @@ export default function Hero() {
           onMouseEnter={() => setModelInteractive(true)}
           onMouseLeave={() => setModelInteractive(false)}
         >
-          <ModelViewer
+          {/* <ModelViewer
             url="/Modèle3d.glb"
             autoRotate={true}
             environmentPreset="studio"
             interactive={modelInteractive}
             
-          />
+          /> */}
         </div>
       </div>
 
       {/* Nom + titre */}
       <div className="absolute bottom-18 left-10 z-20">
         <h1
-          className="font-russo text-8xl font-bold tracking-[0em]"
+          className="font-russo lg:text-8xl md:text-5xl text-3xl font-bold tracking-[-0.05em]"
           style={{ color: "var(--color-text-primary)" }}
         >
           Dayane OROU
         </h1>
         <p
-          className="text-xl tracking-[0.22em] uppercase mt-3 font-light"
+          className="lg:text-xl text-sm  tracking-[0.22em] uppercase mt-3 font-light"
           style={{ color: "var(--color-text-secondary)" }}
         >
           Full Stack Dev Junior
@@ -64,7 +64,7 @@ export default function Hero() {
       </div>
 
       {/* Dock */}
-      <div className="absolute bottom-25 right-10 z-[10000]">
+      <div className="hidden md:block absolute bottom-25 right-10 z-[10000]">
         <Dock iconMagnification={60} iconDistance={100}>
           <DockIcon>
             <Icons.gitHub className="size-full" />
@@ -99,7 +99,6 @@ export default function Hero() {
         </svg>
       </div>
 
-      {/* <RetroGrid /> */}
     </section>
   );
 }
