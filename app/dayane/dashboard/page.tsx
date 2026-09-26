@@ -6,7 +6,7 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <pre>{JSON.stringify(projects, null, 2)}</pre>
+cc
     </div>
   )
 }

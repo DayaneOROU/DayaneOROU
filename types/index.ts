@@ -19,6 +19,7 @@ export type Projects = {
   image_url: string | null          // null si pas d'image uploadée
   project_url: string | null        // null si pas de lien
   status: 'published' | 'draft'     // uniquement ces deux valeurs possibles
+  slug: string 
   created_at: string
   updated_at: string
   category?: ProjectCategories      // ? = optionnel
