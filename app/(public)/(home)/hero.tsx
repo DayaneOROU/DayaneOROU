@@ -37,13 +37,13 @@ export default function Hero() {
           onMouseEnter={() => setModelInteractive(true)}
           onMouseLeave={() => setModelInteractive(false)}
         >
-          {/* <ModelViewer
+          <ModelViewer
             url="/Modèle3d.glb"
             autoRotate={true}
             environmentPreset="studio"
             interactive={modelInteractive}
             
-          /> */}
+          />
         </div>
       </div>
 

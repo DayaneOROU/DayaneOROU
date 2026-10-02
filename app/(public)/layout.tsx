@@ -9,6 +9,7 @@ import {
   Kalam
 } from "next/font/google";
 import ThemeWatcher from "@/components/theme-watcher";
+import Navbar from "@/components/navbar";
 
 const kalam = Kalam({
   subsets: ["latin"],
@@ -47,13 +48,7 @@ const russoOne = Russo_One({
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
-export const metadata: Metadata = {
-  title: "Dayane OROU",
-  description: "Dev Portfolio",
-  icons: {
-    icon: [{ url: "/dayaneorouN.png", sizes: "any" }],
-  },
-};
+
 
 export default function RootLayout({
   children,
@@ -66,7 +61,7 @@ export default function RootLayout({
       className={`${russoOne.variable} ${montserrat.variable} ${geist.variable} ${inter.variable} ${bebas.variable} ${kalam.variable}`}
     >
       <body className="min-h-screen antialiased">
-        <ThemeWatcher />
+        <Navbar />
         {children}
       </body>
     </html>

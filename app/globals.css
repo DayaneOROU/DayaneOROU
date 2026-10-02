@@ -8,6 +8,7 @@
 :root {
   --color-text-primary: #1a1a1a;
   --color-text-secondary: #918981;
+  --color-button: #064e3b;
 
   --hero-bg: radial-gradient(
     ellipse 50% 55% at 50% 42%,
@@ -195,6 +196,15 @@
   [data-stacked-content][data-stacked-covered] {
     transform-origin: 50% 0%;
   }
+
+  .admin-padding {
+    @apply pt-30 lg:px-40 md:px-10 px-5;
+
+  .box-shadow{
+    @apply bg-white p-5 rounded-xl shadow-2xl;
+  }
+
+}
 }
 
 @theme inline {
