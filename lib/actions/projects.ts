@@ -1,6 +1,6 @@
 
 'use server'
-
+import { revalidatePath } from 'next/cache'
 import { createSupabaseServer } from '@/lib/supabase-server'
 import { slugify } from '@/lib/utils'
 import { CreateProjectInput, UpdateProjectInput } from '@/types'
@@ -42,34 +42,44 @@ export async function getProjectBySlug(slug: string) {
 export async function createProject(input: CreateProjectInput, stackIds: string[]) {
   const supabase = await createSupabaseServer()
 
-  // On génère le slug à partir du titre
+  // Validation serveur minimale : le client ne mérite jamais une confiance aveugle
+  if (!input.title?.trim()) return { error: 'Le titre est obligatoire.' }
+
+  // Slug généré à partir du titre (source unique de vérité)
   const slug = slugify(input.title)
 
-  // On insère le projet
+  // Insertion du projet ; .select().single() renvoie la ligne créée (donc son id)
   const { data: project, error } = await supabase
     .from('projects')
     .insert({ ...input, slug })
     .select()
     .single()
 
-  if (error) throw new Error(error.message)
+  // Au lieu de throw : on renvoie l'erreur, lisible dans le modal
+  if (error) return { error: error.message }
 
-  // On insère les stacks liées dans la table pivot
+  // Insertion des stacks liées dans la table pivot
   if (stackIds.length > 0) {
     const pivotRows = stackIds.map((stack_id) => ({
-      project_id: project.id,
+      project_id: project.id, // Id du projet tout juste créé
       stack_id,
     }))
 
-    const { error: stackError } = await supabase
-      .from('project_stacks')
-      .insert(pivotRows)
+    const { error: stackError } = await supabase.from('project_stacks').insert(pivotRows)
 
-    if (stackError) throw new Error(stackError.message)
+    if (stackError) {
+      // Pas de transaction : on annule à la main pour éviter un projet orphelin
+      await supabase.from('projects').delete().eq('id', project.id)
+      return { error: stackError.message }
+    }
   }
 
-  return project
+  // Rafraîchit la liste des projets dans le dashboard
+  revalidatePath('/dayane/dashboard/projects')
+
+  return { error: null } // Succès : forme constante { error }
 }
+
 
 export async function updateProject(id: string, input: UpdateProjectInput, stackIds: string[]) {
   const supabase = await createSupabaseServer()

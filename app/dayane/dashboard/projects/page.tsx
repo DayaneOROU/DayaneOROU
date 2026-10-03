@@ -1,4 +1,6 @@
 // app/dayane/dashboard/projects/page.tsx
+import AddProjectModal from "@/components/add-project-modal";
+import Dashcard from "@/components/dashcard";
 import { createSupabaseServer } from "@/lib/supabase-server";
 import { Plus, ListFilter, ExternalLink, Folder, Search } from "lucide-react";
 import Link from "next/link";
@@ -42,6 +44,11 @@ function statusLabel(status: string) {
 export default async function ProjectsPage() {
   const supabase = await createSupabaseServer();
 
+  const [{ data: stacks }, { data: categories }] = await Promise.all([
+    supabase.from("stacks").select("id, name").order("name"),
+    supabase.from("project_categories").select("id, name").order("name"),
+  ]);
+
   // Récupère tous les projets avec la catégorie associée
   const { data: projects, error } = await supabase
     .from("projects")
@@ -51,7 +58,9 @@ export default async function ProjectsPage() {
   if (error) {
     console.error(error);
     return (
-      <p className="p-5 text-sm text-red-400 sm:p-8">Erreur de chargement des projets.</p>
+      <p className="p-5 text-sm text-red-400 sm:p-8">
+        Erreur de chargement des projets.
+      </p>
     );
   }
 
@@ -66,7 +75,6 @@ export default async function ProjectsPage() {
         {/* ── En-tête ── */}
         <div className="mb-8 flex flex-col gap-5 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
           <div>
-
             <h1 className="font-inter text-4xl font-bold tracking-[-0.05em] sm:text-5xl lg:text-7xl">
               Projets
             </h1>
@@ -75,34 +83,34 @@ export default async function ProjectsPage() {
             </p>
           </div>
 
-          <Link
-            href="/dayane/dashboard/projects/new"
-            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#277861] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-[#277861]/15 transition-all hover:-translate-y-0.5 hover:bg-[#1f624f] hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#277861] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f5f3ef] sm:w-auto sm:px-5 dark:focus-visible:ring-offset-[#101112]"
-          >
-            <Plus size={18} strokeWidth={2.2} />
-            Nouveau projet
-          </Link>
+          <AddProjectModal
+            stacks={stacks ?? []}
+            categories={categories ?? []}
+          />
         </div>
 
         {/* ── Stats rapides ── */}
         <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-5  lg:gap-10 lg:mb-10 ">
-          <div className="box-shadow   dark:bg-white/[0.045] hover:scale-105 transition-all duration-300">
-            <p className="text-xs font-medium uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-400">Total</p>
-            <p className="mt-3 text-3xl font-bold tracking-tight">{total}</p>
-            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">projets</p>
-          </div>
+          <Dashcard
+            title="Total"
+            count={total}
+            description={"projets"}
+            variant={"default"}
+          />
 
-          <div className="box-shadow dark:bg-emerald-400/[0.06]  hover:scale-105 transition-all duration-300">
-            <p className="text-xs font-medium uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-300">Publiés</p>
-            <p className="mt-3 text-3xl font-bold tracking-tight text-emerald-700 dark:text-emerald-300">{published}</p>
-            <p className="mt-1 text-xs text-emerald-800/60 dark:text-emerald-200/60">visibles sur le portfolio</p>
-          </div>
+          <Dashcard
+            title="Publiés"
+            count={published}
+            description="visibles sur le portfolio"
+            variant="vert"
+          />
 
-          <div className="box-shadow dark:bg-white/[0.045]  hover:scale-105 transition-all duration-300">
-            <p className="text-xs font-medium uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-400">Brouillons</p>
-            <p className="mt-3 text-3xl font-bold tracking-tight text-zinc-700 dark:text-zinc-300">{drafts}</p>
-            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">non publiés</p>
-          </div>
+          <Dashcard
+            title="Brouillons"
+            count={drafts}
+            description="non publiés"
+            variant={"default"}
+          />
         </div>
 
         {/* ── Barre filtres ── */}
@@ -161,7 +169,10 @@ export default async function ProjectsPage() {
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900">
-                      <Folder size={30} className="text-zinc-300 dark:text-zinc-700" />
+                      <Folder
+                        size={30}
+                        className="text-zinc-300 dark:text-zinc-700"
+                      />
                     </div>
                   )}
 
@@ -206,7 +217,10 @@ export default async function ProjectsPage() {
                         href={`/dayane/dashboard/projects/${project.id}`}
                         className="inline-flex min-h-8 items-center rounded-lg px-2 text-xs font-semibold text-[#277861] transition hover:bg-[#277861]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#277861] dark:text-emerald-400 dark:hover:bg-emerald-400/10"
                       >
-                        Éditer <span className="ml-1 transition-transform group-hover:translate-x-0.5">→</span>
+                        Éditer{" "}
+                        <span className="ml-1 transition-transform group-hover:translate-x-0.5">
+                          →
+                        </span>
                       </Link>
                     </div>
                   </div>

@@ -1,4 +1,5 @@
 // app/dayane/dashboard/blogs/page.tsx
+import Dashcard from "@/components/dashcard";
 import { getBlogs } from "@/lib/actions/blogs"; // votre action existante (renvoie blogs + projet lié)
 import { Plus, ListFilter, ExternalLink, FileText, Search } from "lucide-react"; // icônes
 import Link from "next/link"; // liens internes Next.js
@@ -40,7 +41,9 @@ export default async function BlogsPage() {
   } catch (error) {
     console.error(error); // trace côté serveur
     return (
-      <p className="p-5 text-sm text-red-400 sm:p-8">Erreur de chargement des articles.</p>
+      <p className="p-5 text-sm text-red-400 sm:p-8">
+        Erreur de chargement des articles.
+      </p>
     );
   }
 
@@ -75,23 +78,26 @@ export default async function BlogsPage() {
 
         {/* ── Stats rapides ── */}
         <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-5 lg:gap-10 lg:mb-10">
-          <div className="box-shadow dark:bg-white/[0.045] hover:scale-105 transition-all duration-300">
-            <p className="text-xs font-medium uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-400">Total</p>
-            <p className="mt-3 text-3xl font-bold tracking-tight">{total}</p>
-            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">articles</p>
-          </div>
+          <Dashcard
+            title="Total"
+            count={total}
+            description="articles"
+            variant={"default"}
+          />
 
-          <div className="box-shadow dark:bg-emerald-400/[0.06] hover:scale-105 transition-all duration-300">
-            <p className="text-xs font-medium uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-300">Publiés</p>
-            <p className="mt-3 text-3xl font-bold tracking-tight text-emerald-700 dark:text-emerald-300">{published}</p>
-            <p className="mt-1 text-xs text-emerald-800/60 dark:text-emerald-200/60">visibles sur le portfolio</p>
-          </div>
+          <Dashcard
+            title="Publiés"
+            count={published}
+            description="visibles sur le portfolio"
+            variant="vert"
+          />
 
-          <div className="box-shadow dark:bg-white/[0.045] hover:scale-105 transition-all duration-300">
-            <p className="text-xs font-medium uppercase tracking-[0.16em] text-zinc-500 dark:text-zinc-400">Brouillons</p>
-            <p className="mt-3 text-3xl font-bold tracking-tight text-zinc-700 dark:text-zinc-300">{drafts}</p>
-            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">non publiés</p>
-          </div>
+          <Dashcard
+            title="Brouillons"
+            count={drafts}
+            description="non publiés"
+            variant={"default"}
+          />
         </div>
 
         {/* ── Barre filtres ── */}
@@ -151,7 +157,10 @@ export default async function BlogsPage() {
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900">
-                      <FileText size={30} className="text-zinc-300 dark:text-zinc-700" />
+                      <FileText
+                        size={30}
+                        className="text-zinc-300 dark:text-zinc-700"
+                      />
                     </div>
                   )}
 
@@ -205,7 +214,10 @@ export default async function BlogsPage() {
                         href={`/dayane/dashboard/blogs/${blog.id}`}
                         className="inline-flex min-h-8 items-center rounded-lg px-2 text-xs font-semibold text-[#277861] transition hover:bg-[#277861]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#277861] dark:text-emerald-400 dark:hover:bg-emerald-400/10"
                       >
-                        Éditer <span className="ml-1 transition-transform group-hover:translate-x-0.5">→</span>
+                        Éditer{" "}
+                        <span className="ml-1 transition-transform group-hover:translate-x-0.5">
+                          →
+                        </span>
                       </Link>
                     </div>
                   </div>

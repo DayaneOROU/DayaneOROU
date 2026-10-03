@@ -51,7 +51,15 @@ export type Messages = {
   created_at: string
 }
 
-export type CreateProjectInput = Omit<Projects, 'id' | 'created_at' | 'updated_at' | 'category' | 'stacks'>
+export type CreateProjectInput = {
+  title: string
+  description: string
+  image_url: string | null
+  project_url: string | null
+  category_id: string | null
+  published: boolean
+}
+
 
 // Ce qu'on envoie pour MODIFIER un projet (tous les champs sont optionnels)
 export type UpdateProjectInput = Partial<CreateProjectInput>
