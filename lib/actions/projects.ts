@@ -7,7 +7,7 @@ import { CreateProjectInput, UpdateProjectInput } from '@/types'
 
 
 export async function getProjects() {
-  const supabase = await createSupabaseServer()
+  const supabase = await createSupabaseServer() 
 
   const { data, error } = await supabase
     .from('projects')
@@ -15,11 +15,11 @@ export async function getProjects() {
       *,
       category:project_categories(*),
       stacks:project_stacks(stack:stacks(*))
-    `)                        // on récupère aussi la catégorie et les stacks liés
-    .order('created_at', { ascending: false }) // les plus récents en premier
+    `)
+    .order('created_at', { ascending: false }) 
 
-  if (error) throw new Error(error.message)
-  return data
+  if (error) return { data: null, error: error.message }
+  return { data, error: null }
 }
 
 export async function getProjectBySlug(slug: string) {

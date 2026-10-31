@@ -1,67 +1,69 @@
 // lib/actions/stacks.ts
-'use server'
+"use server";
 
-import { createSupabaseServer } from '@/lib/supabase-server'
+import { createSupabaseServer } from "@/lib/supabase-server";
 
 // ============================================
 // LIRE — toutes les stacks
 // ============================================
 export async function getStacks() {
-  const supabase = await createSupabaseServer()
-
+  const supabase = await createSupabaseServer();
   const { data, error } = await supabase
-    .from('stacks')
-    .select('*')
-    .order('name', { ascending: true }) // ordre alphabétique
-
-  if (error) throw new Error(error.message)
-  return data
+    .from("stacks")
+    .select("id, name")
+    .order("name");
+  if (error) return { data: null, error: error.message };
+  return { data, error: null };
 }
 
 // ============================================
 // CRÉER — une nouvelle stack
 // ============================================
-export async function createStack(input: { name: string; icon?: string; color?: string }) {
-  const supabase = await createSupabaseServer()
+export async function createStack(input: {
+  name: string;
+  icon?: string;
+  color?: string;
+}) {
+  const supabase = await createSupabaseServer();
 
   const { data, error } = await supabase
-    .from('stacks')
+    .from("stacks")
     .insert(input)
     .select()
-    .single()
+    .single();
 
-  if (error) throw new Error(error.message)
-  return data
+  if (error) throw new Error(error.message);
+  return data;
 }
 
 // ============================================
 // MODIFIER — une stack
 // ============================================
-export async function updateStack(id: string, input: { name?: string; icon?: string; color?: string }) {
-  const supabase = await createSupabaseServer()
+export async function updateStack(
+  id: string,
+  input: { name?: string; icon?: string; color?: string },
+) {
+  const supabase = await createSupabaseServer();
 
   const { data, error } = await supabase
-    .from('stacks')
+    .from("stacks")
     .update(input)
-    .eq('id', id)
+    .eq("id", id)
     .select()
-    .single()
+    .single();
 
-  if (error) throw new Error(error.message)
-  return data
+  if (error) throw new Error(error.message);
+  return data;
 }
 
 // ============================================
 // SUPPRIMER — une stack
 // ============================================
 export async function deleteStack(id: string) {
-  const supabase = await createSupabaseServer()
+  const supabase = await createSupabaseServer();
 
   // Les entrées dans project_stacks sont supprimées automatiquement (CASCADE)
-  const { error } = await supabase
-    .from('stacks')
-    .delete()
-    .eq('id', id)
+  const { error } = await supabase.from("stacks").delete().eq("id", id);
 
-  if (error) throw new Error(error.message)
+  if (error) throw new Error(error.message);
 }

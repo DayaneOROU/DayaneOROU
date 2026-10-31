@@ -11,6 +11,7 @@ export type Stacks = {
   icon: string | null   // peut être null si pas d'icône définie
   color: string | null  // peut être null si pas de couleur définie
 }
+
 export type Projects = {
   id: string
   category_id: string | null        // null si pas de catégorie assignée
@@ -18,12 +19,12 @@ export type Projects = {
   description: string | null
   image_url: string | null          // null si pas d'image uploadée
   project_url: string | null        // null si pas de lien
-  status: 'published' | 'draft'     // uniquement ces deux valeurs possibles
-  slug: string 
+  published: boolean                // remplace l'ancienne colonne status
+  slug: string
   created_at: string
   updated_at: string
-  category?: ProjectCategories      // ? = optionnel
-  stacks?: Stacks[]                  // liste des stacks du projet
+  category: ProjectCategories | null // null (et non undefined) quand la jointure ne trouve rien
+  stacks: Stacks[]                   // toujours un tableau, vide si aucune stack
 }
 
 export type Blogs = {
@@ -31,6 +32,7 @@ export type Blogs = {
   project_id: string | null         // null si pas lié à un projet
   title: string
   slug: string
+  excerpt: string | null            // résumé court affiché dans la liste (nullable : colonne ajoutée en SQL)
   content: string | null            // HTML généré par TipTap
   cover_url: string | null
   published: boolean

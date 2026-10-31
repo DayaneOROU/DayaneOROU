@@ -4,6 +4,7 @@
 import { createSupabaseServer } from '@/lib/supabase-server'
 import { slugify } from '@/lib/utils'
 import { CreateBlogInput, UpdateBlogInput } from '@/types'
+import { revalidatePath } from "next/cache"; // pour rafraîchir la liste après insertion
 
 // ============================================
 // LIRE — tous les articles
@@ -45,19 +46,30 @@ export async function getBlogBySlug(slug: string) {
 // ============================================
 // CRÉER — un nouvel article
 // ============================================
-export async function createBlog(input: CreateBlogInput) {
-  const supabase = await createSupabaseServer()
+export async function createBlog(input: {
+  title: string;
+  excerpt: string;
+  content: string; // HTML produit par TipTap
+  published: boolean;
+}) {
+  // Validation côté serveur : ne jamais faire confiance au client
+  if (!input.title.trim()) return { error: "Le titre est obligatoire." };
+  if (!input.content || input.content === "<p></p>") return { error: "Le contenu est vide." };
 
-  const slug = slugify(input.title)
+  const supabase = await createSupabaseServer(); // client lié à la session de l'utilisateur connecté
 
-  const { data, error } = await supabase
-    .from('blogs')
-    .insert({ ...input, slug })
-    .select()
-    .single()
+  const { error } = await supabase.from("blogs").insert({
+    title: input.title.trim(),
+    slug: slugify(input.title), // slug généré depuis le titre
+    excerpt: input.excerpt.trim() || null, // résumé optionnel
+    content: input.content, // HTML brut dans la colonne content
+    published: input.published, // false = brouillon
+  });
 
-  if (error) throw new Error(error.message)
-  return data
+  if (error) return { error: error.message }; // la RLS ou un slug dupliqué remontent ici
+
+  revalidatePath("/dayane/dashboard/blogs"); // adaptez au chemin réel de votre liste
+  return { error: null };
 }
 
 // ============================================

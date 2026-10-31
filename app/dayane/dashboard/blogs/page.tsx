@@ -1,12 +1,12 @@
-// app/dayane/dashboard/blogs/page.tsx
+// 'use client'
+
 import Dashcard from "@/components/dashcard";
 import { getBlogs } from "@/lib/actions/blogs"; // votre action existante (renvoie blogs + projet lié)
 import { Plus, ListFilter, ExternalLink, FileText, Search } from "lucide-react"; // icônes
 import Link from "next/link"; // liens internes Next.js
+import { createBrowserSupabase } from "@/lib/supabase-browser";
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-// Formate "2026-09-15T..." → "sept. 2026"
 function formatDate(dateString: string) {
   return new Date(dateString).toLocaleDateString("fr-FR", {
     month: "short", // mois abrégé
@@ -31,10 +31,13 @@ function badgeStyle(published: boolean) {
     : "border border-white/10 bg-white/[0.06] text-zinc-400"; // brouillon : gris
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+const supabase = createBrowserSupabase();
 
-export default async function BlogsPage() {
-  // Récupère les articles ; getBlogs() lève une erreur en cas d'échec, on l'intercepte pour afficher un message
+
+export default  async function BlogsPage() {
+
+
+
   let blogs: Awaited<ReturnType<typeof getBlogs>> = [];
   try {
     blogs = await getBlogs();
@@ -68,7 +71,7 @@ export default async function BlogsPage() {
 
           {/* Bouton vers le formulaire de création */}
           <Link
-            href="/dayane/dashboard/blogs/new"
+            href="/dayane/dashboard/blogs/add"
             className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#277861] px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-[#277861]/15 transition-all hover:-translate-y-0.5 hover:bg-[#1f624f] hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#277861] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f5f3ef] sm:w-auto sm:px-5 dark:focus-visible:ring-offset-[#101112]"
           >
             <Plus size={18} strokeWidth={2.2} />
@@ -77,7 +80,7 @@ export default async function BlogsPage() {
         </div>
 
         {/* ── Stats rapides ── */}
-        <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-5 lg:gap-10 lg:mb-10">
+        <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-5 lg:gap-10 lg:mb-10 ">
           <Dashcard
             title="Total"
             count={total}

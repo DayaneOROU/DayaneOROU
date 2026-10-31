@@ -5,8 +5,8 @@ export default async function DashboardPage() {
   const projects = await getProjects()
 
   return (
-    <div>
-cc
+    <div className='admin-padding'>
+        cc
     </div>
   )
 }

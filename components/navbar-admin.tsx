@@ -6,6 +6,8 @@ import { useRef, useState, useEffect } from "react";
 import Link from "next/link"; // Navigation client : plus de rechargement de page
 import { usePathname } from "next/navigation";
 import { HamburgerMenuOverlay } from "@/components/lightswind/hamburger-menu-overlay";
+import { signOut } from '@/lib/actions/auth'
+
 
 // Route racine du dashboard, utilisée pour la correspondance exacte
 const DASHBOARD_ROOT = "/dayane/dashboard";
@@ -59,10 +61,6 @@ export default function NavbarAdmin() {
   };
 
   // CORRECTION 3 : handler de déconnexion (à brancher sur votre logique d'auth)
-  const handleLogout = async () => {
-    // TODO : ex. await supabase.auth.signOut(); router.push("/login");
-    console.log("Déconnexion");
-  };
 
   return (
     <header className="fixed inset-x-0 top-0 z-[100] px-3 pt-3 sm:px-5 sm:pt-5">
@@ -126,8 +124,8 @@ export default function NavbarAdmin() {
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             <button
               type="button"
-              onClick={handleLogout}
-              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl px-2.5 text-xs font-semibold text-red-500 transition hover:scale-110 sm:px-3 dark:text-red-300 dark:hover:text-red-200"
+              onClick={signOut}
+              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl px-2.5 text-xs font-semibold text-red-500 transition hover:scale-130 sm:px-3 dark:text-red-300 dark:hover:text-red-200"
               aria-label="Déconnexion"
             >
               <LogOut size={16} strokeWidth={2} />

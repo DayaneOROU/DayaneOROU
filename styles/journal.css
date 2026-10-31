@@ -1,0 +1,196 @@
+/* ============ CONTENEUR : tout le style vit sous .journal ============ */
+.journal {
+  position: relative;               /* repère pour les éléments positionnés dedans */
+  max-width: 700px;                 /* colonne de lecture étroite, comme la maquette */
+  margin: 0 auto;                   /* centrée dans la page */
+  font-family: var(--font-body), system-ui, sans-serif; /* police du texte (DM Sans via next/font) */
+  font-size: 18px;
+  line-height: 1.8;                 /* interligne aéré */
+  color: #1c1b19;                   /* noir chaud, pas noir pur */
+}
+
+/* ============ TITRES : manuscrits + soulignement ondulé ============ */
+.journal h2 {
+  margin: 56px 0 14px;              /* grand espace avant, petit après */
+  font-family: var(--font-hand), cursive; /* Caveat */
+  font-weight: 600;
+  font-size: 42px;
+  line-height: 1.1;
+  color: #064E3B;                   /* vert Bénin Travel */
+}
+.journal h2::after {                /* le soulignement est un pseudo-élément : zéro HTML en plus */
+  content: "";
+  display: block;
+  width: 130px;
+  height: 12px;
+  margin-top: 2px;
+  /* ondulation SVG dessinée à la main, intégrée en data-URI (le # de la couleur s'écrit %23) */
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='130' height='12' viewBox='0 0 130 12'%3E%3Cpath d='M2 7 Q 12 1 22 7 T 42 7 T 62 7 T 82 7 T 102 7 T 126 7' fill='none' stroke='%23D97706' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat;
+}
+
+/* ============ PARAGRAPHES ============ */
+.journal p { margin: 0 0 18px; }
+
+/* ============ SURLIGNAGE « MARQUEUR » ============ */
+/* l'extension Highlight de TipTap produit des <mark> */
+.journal mark {
+  background: linear-gradient(transparent 58%, #F4D58D 58%); /* le jaune ne couvre que le bas du mot */
+  color: inherit;                   /* on garde la couleur du texte */
+}
+
+/* ============ LISTE NUMÉROTÉE À LA MAIN ============ */
+.journal ol {
+  list-style: none;                 /* on retire les chiffres par défaut */
+  padding: 0;
+  margin: 0 0 30px;
+  counter-reset: etape;             /* compteur maison, repart à 0 pour chaque liste */
+}
+.journal ol > li {
+  position: relative;
+  counter-increment: etape;         /* +1 à chaque élément */
+  padding-left: 58px;               /* place pour le chiffre */
+  margin-bottom: 26px;
+}
+.journal ol > li::before {
+  content: counter(etape) ".";      /* affiche « 1. », « 2. »… */
+  position: absolute;
+  left: 0;
+  top: -6px;
+  font-family: var(--font-hand), cursive;
+  font-size: 44px;
+  line-height: 1;
+  color: #B45309;                   /* ambre foncé : lisible sur le beige */
+}
+.journal ol > li > p { margin: 0; } /* TipTap met un <p> dans chaque <li> */
+
+/* ============ FENÊTRE DE NAVIGATEUR (nœud « capture ») ============ */
+.journal .browser-shot {
+  position: relative;               /* repère pour le scotch et les stickers */
+  margin: 56px 0 64px;
+  transition: transform .2s;
+}
+.journal .browser-shot[data-tilt="left"]  { transform: rotate(-.6deg); } /* penchée à gauche */
+.journal .browser-shot[data-tilt="right"] { transform: rotate(.7deg); }  /* penchée à droite */
+.journal .browser-shot::before {    /* le morceau de scotch */
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  margin-left: -45px;               /* centré */
+  width: 90px;
+  height: 26px;
+  background: #E7D49C;
+  opacity: .85;
+  transform: rotate(2deg);
+  z-index: 2;                       /* au-dessus de la capture */
+}
+.journal .browser-shot .frame {     /* le cadre de la fenêtre */
+  border-radius: 12px;
+  overflow: hidden;                 /* coins arrondis aussi pour l'image */
+  border: 1px solid #1F2937;
+  background: #fff;
+  box-shadow: 0 22px 44px -16px rgba(6, 40, 30, .35);
+}
+.journal .browser-shot .bar {       /* barre du haut avec les 3 pastilles */
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 34px;
+  padding: 0 14px;
+  background: #ece9e2;
+  border-bottom: 1px solid #d6d2c8;
+}
+.journal .browser-shot .dot { width: 11px; height: 11px; border-radius: 50%; }
+.journal .browser-shot .dot:nth-child(1) { background: #ff5f57; }
+.journal .browser-shot .dot:nth-child(2) { background: #febc2e; }
+.journal .browser-shot .dot:nth-child(3) { background: #28c840; }
+.journal .browser-shot .url {       /* la pastille d'adresse */
+  margin: 0 auto;
+  width: 44%;
+  height: 20px;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: center;
+  color: #4b5563;
+}
+.journal .browser-shot img { display: block; width: 100%; height: auto; margin: 0; }
+
+/* ============ NOTE EN MARGE ============ */
+.journal .margin-note {
+  float: right;                     /* sort du flux et se range à droite */
+  clear: right;                     /* deux notes ne se chevauchent jamais */
+  width: 190px;
+  margin: 4px -230px 0 40px;        /* marge droite négative = la note sort dans la marge */
+  font-family: var(--font-hand), cursive;
+  font-size: 25px;
+  line-height: 1.15;
+  color: #B45309;
+  transform: rotate(2deg);          /* légèrement penchée, écrite à la main */
+}
+/* NB : la note doit être placée AVANT le paragraphe qu'elle commente */
+
+/* ============ STICKERS MEMOJI (planche de 6 images) ============ */
+.journal .sticker {
+  position: absolute;               /* par défaut : accroché à un coin de sa capture */
+  width: var(--w, 120px);           /* taille réglable par variable */
+  max-width: 22vw;                  /* ne dépasse jamais sur petit écran */
+  aspect-ratio: 7 / 8;              /* proportions d'une case de la planche */
+  background: url("/memoji/stickers.png") no-repeat;
+  background-size: 600% 100%;       /* 6 cases côte à côte */
+  pointer-events: none;             /* n'intercepte pas les clics */
+}
+/* quelle case de la planche : 0 = cœur, 1 = salut, 2 = haussement, 3 = stop, 4 = présente, 5 = merci */
+.journal .sticker[data-sticker="0"] { background-position: 0 0; }
+.journal .sticker[data-sticker="1"] { background-position: 20% 0; }
+.journal .sticker[data-sticker="2"] { background-position: 40% 0; }
+.journal .sticker[data-sticker="3"] { background-position: 60% 0; }
+.journal .sticker[data-sticker="4"] { background-position: 80% 0; }
+.journal .sticker[data-sticker="5"] { background-position: 100% 0; }
+/* coins d'accroche sur une capture */
+.journal .sticker[data-corner="tl"] { left: -40px;  top: -62px;    transform: rotate(-9deg); }
+.journal .sticker[data-corner="tr"] { right: -40px; top: -62px;    transform: rotate(8deg); }
+.journal .sticker[data-corner="bl"] { left: -40px;  bottom: -66px; transform: rotate(-7deg); }
+.journal .sticker[data-corner="br"] { right: -40px; bottom: -66px; transform: rotate(7deg); }
+/* sticker flottant libre dans le texte (futur nœud « Sticker ») */
+.journal .sticker[data-float] {
+  position: relative;               /* revient dans le flux */
+  float: right;
+  margin: 0 0 12px 24px;
+  transform: rotate(6deg);
+}
+.journal .sticker[data-float="left"] { float: left; margin: 0 24px 12px 0; transform: rotate(-6deg); }
+
+/* ============ MOBILE : les notes passent sous leur paragraphe ============ */
+@media (max-width: 1100px) {
+  .journal .margin-note {
+    float: none;
+    width: auto;
+    margin: 6px 0 22px;
+    transform: none;
+  }
+}
+
+/* ===== IMAGE SIMPLE (bouton « Image », sans cadre de navigateur) ===== */
+.journal img {
+  display: block;                   /* évite l'espace parasite sous l'image */
+  max-width: 100%;                  /* ne déborde jamais de la colonne */
+  height: auto;                     /* garde les proportions */
+  margin: 36px 0;                   /* respiration avant et après */
+  border-radius: 10px;              /* coins doux, comme les cartes du site */
+  box-shadow: 0 14px 30px -14px rgba(28, 27, 25, .35); /* ombre légère, effet « photo posée » */
+}
+/* dans une capture, c'est le cadre qui porte coins et ombre : on neutralise ceux de l'image */
+.journal .browser-shot img {
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* ===== FOND DE PAGE « PAPIER » : seulement la page article ===== */
+.journal-page {
+  background: #F8F4EA;              /* beige papier de la maquette */
+  padding: 72px 24px 110px;         /* marges autour de l'article */
+  min-height: 100vh;                /* le fond couvre toute la hauteur de l'écran */
+}

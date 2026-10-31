@@ -10,9 +10,10 @@ type Option = { id: string; name: string };
 type Props = {
   stacks: Option[]; // Liste des stacks disponibles
   categories: Option[]; // Liste des catégories disponibles
+  onCreated?: () => void;
 };
 
-export default function AddProjectModal({ stacks, categories }: Props) {
+export default function AddProjectModal({ stacks, categories, onCreated }: Props) {
   const [open, setOpen] = useState(false); // Modal ouvert / fermé
   const [error, setError] = useState<string | null>(null); // Erreur renvoyée par le serveur
   const [selectedStacks, setSelectedStacks] = useState<string[]>([]); // Ids des stacks cochées
@@ -39,34 +40,32 @@ export default function AddProjectModal({ stacks, categories }: Props) {
     const fd = new FormData(e.currentTarget); // Lecture des champs
     setError(null);
 
-    // Construction de l'objet attendu par createProject
-    // Pas de slug ici : il est généré côté serveur par slugify()
-    // Pas de status non plus : la colonne a été remplacée par published
     const input = {
       title: String(fd.get("title") ?? "").trim(),
       description: String(fd.get("description") ?? "").trim(),
-      image_url: String(fd.get("image_url") ?? "").trim() || null, // Vide -> null
+      image_url: String(fd.get("image_url") ?? "").trim() || null,
       project_url: String(fd.get("project_url") ?? "").trim() || null,
       category_id: String(fd.get("category_id") ?? "") || null,
-      published: fd.get("published") === "on", // Checkbox cochée = "on"
+      published: fd.get("published") === "on",
     };
 
     startTransition(async () => {
       const res = await createProject(input, selectedStacks); // Appel de la Server Action
       if (res?.error) {
-        setError(res.error); // On garde le modal ouvert pour corriger
+        setError(res.error);
         return;
       }
       formRef.current?.reset(); // Vide le formulaire
       setSelectedStacks([]); // Vide la sélection de stacks
-      setOpen(false); // Ferme ; la liste est déjà revalidée
+      onCreated?.();
+      setOpen(false);
     });
   }
 
 
   // Style commun des champs (palette du portfolio)
   const field =
-    "w-full rounded-lg bg-[#1A1A1A] border border-[#918981]/40 px-3 py-2 text-[#E8DCC8] outline-none focus:border-[#E8DCC8]";
+    "w-full rounded-lg border border-gray-400 px-3 py-2 text-gray-900 outline-none focus:border-gray-900";
 
   return (
     <>
@@ -85,10 +84,10 @@ export default function AddProjectModal({ stacks, categories }: Props) {
           onClick={() => setOpen(false)} // Clic sur le fond = fermeture
         >
           <div
-            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-[#918981]/30 bg-[#0a0a0a] p-6"
+            className="max-h-[90wh] w-full max-w-3xl overflow-y-auto rounded-2xl border border-[#918981]/30 bg-gray-100 dark:bg-[#0a0a0a] p-6"
             onClick={(e) => e.stopPropagation()} // Pas de fermeture au clic dans le modal
           >
-            <h2 className="mb-4 text-xl font-semibold text-[#E8DCC8]">
+            <h2 className="mb-4 text-xl font-semibold dark:text-[#E8DCC8]">
               Nouveau projet
             </h2>
 
@@ -128,7 +127,7 @@ export default function AddProjectModal({ stacks, categories }: Props) {
 
               {/* Stacks : relation many-to-many, sélection par pastilles */}
               <div>
-                <p className="mb-2 text-sm text-[#D0CDC9]">Stacks</p>
+                <p className="mb-2 text-sm text-gray-900 dark:text-[#D0CDC9]">Stacks</p>
                 <div className="flex flex-wrap gap-2">
                   {stacks.map((s) => {
                     const active = selectedStacks.includes(s.id); // Pastille sélectionnée ?
@@ -150,7 +149,7 @@ export default function AddProjectModal({ stacks, categories }: Props) {
                 </div>
               </div>
 
-              <label className="flex items-center gap-2 text-sm text-[#D0CDC9]">
+              <label className="flex items-center gap-2 text-sm text-gray-900 dark:text-[#D0CDC9]">
                 <input type="checkbox" name="published" /> Publier immédiatement
               </label>
 
@@ -160,14 +159,14 @@ export default function AddProjectModal({ stacks, categories }: Props) {
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="rounded-lg px-4 py-2 text-[#D0CDC9] hover:bg-white/5"
+                  className="rounded-lg px-4 py-2 text-gray-900 dark:text-[#D0CDC9] hover:bg-white/5"
                 >
                   Annuler
                 </button>
                 <button
                   type="submit"
                   disabled={pending} // Anti double-clic
-                  className="rounded-lg bg-[#E8DCC8] px-4 py-2 font-medium text-[#1A1A1A] disabled:opacity-50"
+                  className="rounded-lg bg-[#e7c589] px-4 py-2 font-medium cursor-pointer text-[#1A1A1A] disabled:opacity-50"
                 >
                   {pending ? "Enregistrement…" : "Valider"}
                 </button>
