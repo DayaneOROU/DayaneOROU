@@ -1,14 +1,22 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { EditorContent, EditorContext, useEditor } from "@tiptap/react"
+// MODIFIÉ : on ajoute useCurrentEditor (lire l'éditeur depuis le contexte) et useEditorState
+// (se re-rendre quand la sélection change) pour notre bouton de surlignage maison
+import {
+  EditorContent,
+  EditorContext,
+  useCurrentEditor,
+  useEditor,
+  useEditorState,
+} from "@tiptap/react"
 
 // --- Tiptap Core Extensions ---
 import { StarterKit } from "@tiptap/starter-kit"
 import { Image } from "@tiptap/extension-image"
 import { TaskItem, TaskList } from "@tiptap/extension-list"
 import { TextAlign } from "@tiptap/extension-text-align"
-import { Typography } from "@tiptap/extension-typography"
+// RETIRÉ : import { Typography } ... (la typographie automatique remplaçait « ... » et « -> » sans prévenir)
 import { Highlight } from "@tiptap/extension-highlight"
 import { Subscript } from "@tiptap/extension-subscript"
 import { Superscript } from "@tiptap/extension-superscript"
@@ -41,11 +49,8 @@ import { ImageUploadButton } from "@/components/tiptap-ui/image-upload-button"
 import { ListDropdownMenu } from "@/components/tiptap-ui/list-dropdown-menu"
 import { BlockquoteButton } from "@/components/tiptap-ui/blockquote-button"
 import { CodeBlockButton } from "@/components/tiptap-ui/code-block-button"
-import {
-  ColorHighlightPopover,
-  ColorHighlightPopoverContent,
-  ColorHighlightPopoverButton,
-} from "@/components/tiptap-ui/color-highlight-popover"
+// RETIRÉ : les imports de ColorHighlightPopover, ColorHighlightPopoverContent et
+// ColorHighlightPopoverButton (menu de choix de couleurs : la couleur viendra du thème)
 import {
   LinkPopover,
   LinkContent,
@@ -78,21 +83,49 @@ import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils"
 // --- Styles ---
 import "@/components/tiptap-templates/simple/simple-editor.scss"
 
-import content from "@/components/tiptap-templates/simple/data/content.json"
+// RETIRÉ : import content from ".../data/content.json" (le texte de démonstration)
 
 const SEARCH_AND_REPLACE_SCROLL_OPTIONS: ScrollIntoViewOptions = {
   block: "center",
 }
 
+// AJOUTÉ : bouton « Surligner » à une seule couleur.
+// Il applique une balise <mark> SANS couleur : c'est notre CSS (variable --j-mark du thème) qui la peindra.
+const HighlightToggleButton = () => {
+  const { editor } = useCurrentEditor() // l'éditeur fourni par EditorContext.Provider plus bas
+
+  // Vrai quand le curseur est dans un texte surligné ; se met à jour à chaque changement de sélection
+  const isActive = useEditorState({
+    editor,
+    selector: (ctx) => ctx.editor?.isActive("highlight") ?? false,
+  })
+
+  if (!editor) return null // l'éditeur n'est pas encore prêt au premier rendu
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      data-active-state={isActive ? "on" : "off"} // le style « enfoncé » du template
+      aria-label="Surligner"
+      aria-pressed={isActive}
+      title="Surligner"
+      onMouseDown={(e) => e.preventDefault()} // garde la sélection du texte quand on clique
+      onClick={() => editor.chain().focus().toggleHighlight().run()} // pose ou retire le <mark>
+    >
+      <HighlighterIcon className="tiptap-button-icon" />
+    </Button>
+  )
+}
+
 const MainToolbarContent = ({
-  onHighlighterClick,
+  // RETIRÉ : onHighlighterClick (la vue mobile « surligneur » n'existe plus)
   onLinkClick,
   onSearchAndReplaceClick,
   isSearchAndReplaceOpen,
   searchAndReplaceButtonRef,
   isMobile,
 }: {
-  onHighlighterClick: () => void
   onLinkClick: () => void
   onSearchAndReplaceClick: () => void
   isSearchAndReplaceOpen: boolean
@@ -111,7 +144,8 @@ const MainToolbarContent = ({
       <ToolbarSeparator />
 
       <ToolbarGroup>
-        <HeadingDropdownMenu modal={false} levels={[1, 2, 3, 4]} />
+        {/* MODIFIÉ : niveaux [1,2,3,4] -> [2,3,4] : le H1 est déjà le titre de la page */}
+        <HeadingDropdownMenu modal={false} levels={[2, 3, 4]} />
         <ListDropdownMenu
           modal={false}
           types={["bulletList", "orderedList", "taskList"]}
@@ -128,11 +162,9 @@ const MainToolbarContent = ({
         <MarkButton type="strike" />
         <MarkButton type="code" />
         <MarkButton type="underline" />
-        {!isMobile ? (
-          <ColorHighlightPopover />
-        ) : (
-          <ColorHighlightPopoverButton onClick={onHighlighterClick} />
-        )}
+        {/* MODIFIÉ : un seul bouton de surlignage, identique sur bureau et mobile
+            (avant : popover de couleurs sur bureau, vue spéciale sur mobile) */}
+        <HighlightToggleButton />
         {!isMobile ? <LinkPopover /> : <LinkButton onClick={onLinkClick} />}
       </ToolbarGroup>
 
@@ -175,41 +207,27 @@ const MainToolbarContent = ({
   )
 }
 
-const MobileToolbarContent = ({
-  type,
-  onBack,
-}: {
-  type: "highlighter" | "link"
-  onBack: () => void
-}) => (
+// MODIFIÉ : il ne reste qu'une vue mobile (le lien), donc plus de prop "type"
+const MobileToolbarContent = ({ onBack }: { onBack: () => void }) => (
   <>
     <ToolbarGroup>
       <Button variant="ghost" onClick={onBack}>
         <ArrowLeftIcon className="tiptap-button-icon" />
-        {type === "highlighter" ? (
-          <HighlighterIcon className="tiptap-button-icon" />
-        ) : (
-          <LinkIcon className="tiptap-button-icon" />
-        )}
+        <LinkIcon className="tiptap-button-icon" />
       </Button>
     </ToolbarGroup>
 
     <ToolbarSeparator />
 
-    {type === "highlighter" ? (
-      <ColorHighlightPopoverContent />
-    ) : (
-      <LinkContent />
-    )}
+    <LinkContent />
   </>
 )
 
 export function SimpleEditor() {
   const isMobile = useIsBreakpoint()
   const { height } = useWindowSize()
-  const [mobileView, setMobileView] = useState<"main" | "highlighter" | "link">(
-    "main"
-  )
+  // MODIFIÉ : "highlighter" retiré des vues possibles
+  const [mobileView, setMobileView] = useState<"main" | "link">("main")
   const [isSearchAndReplaceOpen, setIsSearchAndReplaceOpen] = useState(false)
   const toolbarRef = useRef<HTMLDivElement>(null)
   const searchAndReplaceButtonRef = useRef<HTMLButtonElement>(null)
@@ -237,9 +255,11 @@ export function SimpleEditor() {
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       TaskList,
       TaskItem.configure({ nested: true }),
-      Highlight.configure({ multicolor: true }),
+      // MODIFIÉ : multicolor true -> false. Le <mark> n'embarque plus de couleur en dur :
+      // elle vient du thème de l'article
+      Highlight.configure({ multicolor: false }),
       Image,
-      Typography,
+      // RETIRÉ : Typography
       Superscript,
       Subscript,
       Selection,
@@ -251,11 +271,12 @@ export function SimpleEditor() {
         accept: "image/*",
         maxSize: MAX_FILE_SIZE,
         limit: 3,
-        upload: handleImageUpload,
+        upload: handleImageUpload, // inchangé : c'est encore le code de démo (remplacé à l'étape 8)
         onError: (error) => console.error("Upload failed:", error),
       }),
     ],
-    content,
+    // MODIFIÉ : document vide au lieu du texte de démonstration
+    content: "",
   })
 
   const rect = useCursorVisibility({
@@ -303,7 +324,7 @@ export function SimpleEditor() {
         >
           {mobileView === "main" ? (
             <MainToolbarContent
-              onHighlighterClick={() => setMobileView("highlighter")}
+              // RETIRÉ : onHighlighterClick
               onLinkClick={() => setMobileView("link")}
               onSearchAndReplaceClick={toggleSearchAndReplace}
               isSearchAndReplaceOpen={isSearchAndReplaceOpen}
@@ -311,10 +332,8 @@ export function SimpleEditor() {
               isMobile={isMobile}
             />
           ) : (
-            <MobileToolbarContent
-              type={mobileView === "highlighter" ? "highlighter" : "link"}
-              onBack={() => setMobileView("main")}
-            />
+            // MODIFIÉ : plus de prop "type"
+            <MobileToolbarContent onBack={() => setMobileView("main")} />
           )}
         </Toolbar>
 
