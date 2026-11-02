@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react";
 // MODIFIÉ : on ajoute useCurrentEditor (lire l'éditeur depuis le contexte) et useEditorState
 // (se re-rendre quand la sélection change) pour notre bouton de surlignage maison
 import {
@@ -9,98 +9,98 @@ import {
   useCurrentEditor,
   useEditor,
   useEditorState,
-} from "@tiptap/react"
+} from "@tiptap/react";
 
 // --- Tiptap Core Extensions ---
-import { StarterKit } from "@tiptap/starter-kit"
-import { Image } from "@tiptap/extension-image"
-import { TaskItem, TaskList } from "@tiptap/extension-list"
-import { TextAlign } from "@tiptap/extension-text-align"
+import { StarterKit } from "@tiptap/starter-kit";
+import { Image } from "@tiptap/extension-image";
+import { TaskItem, TaskList } from "@tiptap/extension-list";
+import { TextAlign } from "@tiptap/extension-text-align";
 // RETIRÉ : import { Typography } ... (la typographie automatique remplaçait « ... » et « -> » sans prévenir)
-import { Highlight } from "@tiptap/extension-highlight"
-import { Subscript } from "@tiptap/extension-subscript"
-import { Superscript } from "@tiptap/extension-superscript"
-import { FindAndReplace } from "@tiptap/extension-find-and-replace"
-import { Selection } from "@tiptap/extensions"
+import { Highlight } from "@tiptap/extension-highlight";
+import { Subscript } from "@tiptap/extension-subscript";
+import { Superscript } from "@tiptap/extension-superscript";
+import { FindAndReplace } from "@tiptap/extension-find-and-replace";
+import { Selection } from "@tiptap/extensions";
 
 // --- UI Primitives ---
-import { Button } from "@/components/tiptap-ui-primitive/button"
-import { Spacer } from "@/components/tiptap-ui-primitive/spacer"
+import { Button } from "@/components/tiptap-ui-primitive/button";
+import { Spacer } from "@/components/tiptap-ui-primitive/spacer";
 import {
   Toolbar,
   ToolbarGroup,
   ToolbarSeparator,
-} from "@/components/tiptap-ui-primitive/toolbar"
+} from "@/components/tiptap-ui-primitive/toolbar";
 
 // --- Tiptap Node ---
-import { ImageUploadNode } from "@/components/tiptap-node/image-upload-node/image-upload-node-extension"
-import { HorizontalRule } from "@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension"
-import "@/components/tiptap-node/blockquote-node/blockquote-node.scss"
-import "@/components/tiptap-node/code-block-node/code-block-node.scss"
-import "@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node.scss"
-import "@/components/tiptap-node/list-node/list-node.scss"
-import "@/components/tiptap-node/image-node/image-node.scss"
-import "@/components/tiptap-node/heading-node/heading-node.scss"
-import "@/components/tiptap-node/paragraph-node/paragraph-node.scss"
+import { ImageUploadNode } from "@/components/tiptap-node/image-upload-node/image-upload-node-extension";
+import { HorizontalRule } from "@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension";
+import "@/components/tiptap-node/blockquote-node/blockquote-node.scss";
+import "@/components/tiptap-node/code-block-node/code-block-node.scss";
+import "@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node.scss";
+import "@/components/tiptap-node/list-node/list-node.scss";
+import "@/components/tiptap-node/image-node/image-node.scss";
+import "@/components/tiptap-node/heading-node/heading-node.scss";
+import "@/components/tiptap-node/paragraph-node/paragraph-node.scss";
 
 // --- Tiptap UI ---
-import { HeadingDropdownMenu } from "@/components/tiptap-ui/heading-dropdown-menu"
-import { ImageUploadButton } from "@/components/tiptap-ui/image-upload-button"
-import { ListDropdownMenu } from "@/components/tiptap-ui/list-dropdown-menu"
-import { BlockquoteButton } from "@/components/tiptap-ui/blockquote-button"
-import { CodeBlockButton } from "@/components/tiptap-ui/code-block-button"
+import { HeadingDropdownMenu } from "@/components/tiptap-ui/heading-dropdown-menu";
+import { ImageUploadButton } from "@/components/tiptap-ui/image-upload-button";
+import { ListDropdownMenu } from "@/components/tiptap-ui/list-dropdown-menu";
+import { BlockquoteButton } from "@/components/tiptap-ui/blockquote-button";
+import { CodeBlockButton } from "@/components/tiptap-ui/code-block-button";
 // RETIRÉ : les imports de ColorHighlightPopover, ColorHighlightPopoverContent et
 // ColorHighlightPopoverButton (menu de choix de couleurs : la couleur viendra du thème)
 import {
   LinkPopover,
   LinkContent,
   LinkButton,
-} from "@/components/tiptap-ui/link-popover"
-import { MarkButton } from "@/components/tiptap-ui/mark-button"
-import { TextAlignButton } from "@/components/tiptap-ui/text-align-button"
-import { UndoRedoButton } from "@/components/tiptap-ui/undo-redo-button"
+} from "@/components/tiptap-ui/link-popover";
+import { MarkButton } from "@/components/tiptap-ui/mark-button";
+import { TextAlignButton } from "@/components/tiptap-ui/text-align-button";
+import { UndoRedoButton } from "@/components/tiptap-ui/undo-redo-button";
 import {
   SearchAndReplace,
   SearchAndReplaceButton,
-} from "@/components/tiptap-ui/search-and-replace"
+} from "@/components/tiptap-ui/search-and-replace";
 
 // --- Icons ---
-import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon"
-import { HighlighterIcon } from "@/components/tiptap-icons/highlighter-icon"
-import { LinkIcon } from "@/components/tiptap-icons/link-icon"
+import { ArrowLeftIcon } from "@/components/tiptap-icons/arrow-left-icon";
+import { HighlighterIcon } from "@/components/tiptap-icons/highlighter-icon";
+import { LinkIcon } from "@/components/tiptap-icons/link-icon";
 
 // --- Hooks ---
-import { useIsBreakpoint } from "@/hooks/use-is-breakpoint"
-import { useWindowSize } from "@/hooks/use-window-size"
-import { useCursorVisibility } from "@/hooks/use-cursor-visibility"
+import { useIsBreakpoint } from "@/hooks/use-is-breakpoint";
+import { useWindowSize } from "@/hooks/use-window-size";
+import { useCursorVisibility } from "@/hooks/use-cursor-visibility";
 
 // --- Components ---
-import { ThemeToggle } from "@/components/tiptap-templates/simple/theme-toggle"
+import { ThemeToggle } from "@/components/tiptap-templates/simple/theme-toggle";
 
 // --- Lib ---
-import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils"
+import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
 
 // --- Styles ---
-import "@/components/tiptap-templates/simple/simple-editor.scss"
+import "@/components/tiptap-templates/simple/simple-editor.scss";
 
 // RETIRÉ : import content from ".../data/content.json" (le texte de démonstration)
 
 const SEARCH_AND_REPLACE_SCROLL_OPTIONS: ScrollIntoViewOptions = {
   block: "center",
-}
+};
 
 // AJOUTÉ : bouton « Surligner » à une seule couleur.
 // Il applique une balise <mark> SANS couleur : c'est notre CSS (variable --j-mark du thème) qui la peindra.
 const HighlightToggleButton = () => {
-  const { editor } = useCurrentEditor() // l'éditeur fourni par EditorContext.Provider plus bas
+  const { editor } = useCurrentEditor(); // l'éditeur fourni par EditorContext.Provider plus bas
 
   // Vrai quand le curseur est dans un texte surligné ; se met à jour à chaque changement de sélection
   const isActive = useEditorState({
     editor,
-    selector: (ctx) => ctx.editor?.isActive("highlight") ?? false,
-  })
+    selector: (ctx) => Boolean(ctx.editor?.isActive("highlight")),
+  });
 
-  if (!editor) return null // l'éditeur n'est pas encore prêt au premier rendu
+  if (!editor) return null; // l'éditeur n'est pas encore prêt au premier rendu
 
   return (
     <Button
@@ -108,15 +108,15 @@ const HighlightToggleButton = () => {
       variant="ghost"
       data-active-state={isActive ? "on" : "off"} // le style « enfoncé » du template
       aria-label="Surligner"
-      aria-pressed={isActive}
+      aria-pressed={Boolean(isActive)}
       title="Surligner"
       onMouseDown={(e) => e.preventDefault()} // garde la sélection du texte quand on clique
       onClick={() => editor.chain().focus().toggleHighlight().run()} // pose ou retire le <mark>
     >
       <HighlighterIcon className="tiptap-button-icon" />
     </Button>
-  )
-}
+  );
+};
 
 const MainToolbarContent = ({
   // RETIRÉ : onHighlighterClick (la vue mobile « surligneur » n'existe plus)
@@ -126,11 +126,11 @@ const MainToolbarContent = ({
   searchAndReplaceButtonRef,
   isMobile,
 }: {
-  onLinkClick: () => void
-  onSearchAndReplaceClick: () => void
-  isSearchAndReplaceOpen: boolean
-  searchAndReplaceButtonRef: React.RefObject<HTMLButtonElement | null>
-  isMobile: boolean
+  onLinkClick: () => void;
+  onSearchAndReplaceClick: () => void;
+  isSearchAndReplaceOpen: boolean;
+  searchAndReplaceButtonRef: React.RefObject<HTMLButtonElement | null>;
+  isMobile: boolean;
 }) => {
   return (
     <>
@@ -204,8 +204,8 @@ const MainToolbarContent = ({
         <ThemeToggle />
       </ToolbarGroup>
     </>
-  )
-}
+  );
+};
 
 // MODIFIÉ : il ne reste qu'une vue mobile (le lien), donc plus de prop "type"
 const MobileToolbarContent = ({ onBack }: { onBack: () => void }) => (
@@ -221,16 +221,25 @@ const MobileToolbarContent = ({ onBack }: { onBack: () => void }) => (
 
     <LinkContent />
   </>
-)
+);
 
-export function SimpleEditor() {
-  const isMobile = useIsBreakpoint()
-  const { height } = useWindowSize()
+type SimpleEditorProps = {
+  value?: string; // HTML initial (lu une seule fois, au montage)
+  onChange?: (html: string) => void; // appelé à chaque modification
+};
+
+export function SimpleEditor({ value = "", onChange }: SimpleEditorProps) {
+  const isMobile = useIsBreakpoint();
+  const { height } = useWindowSize();
   // MODIFIÉ : "highlighter" retiré des vues possibles
-  const [mobileView, setMobileView] = useState<"main" | "link">("main")
-  const [isSearchAndReplaceOpen, setIsSearchAndReplaceOpen] = useState(false)
-  const toolbarRef = useRef<HTMLDivElement>(null)
-  const searchAndReplaceButtonRef = useRef<HTMLButtonElement>(null)
+  const [mobileView, setMobileView] = useState<"main" | "link">("main");
+  const [isSearchAndReplaceOpen, setIsSearchAndReplaceOpen] = useState(false);
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const searchAndReplaceButtonRef = useRef<HTMLButtonElement>(null);
+  const onChangeRef = useRef(onChange);
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  });
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -275,39 +284,41 @@ export function SimpleEditor() {
         onError: (error) => console.error("Upload failed:", error),
       }),
     ],
-    // MODIFIÉ : document vide au lieu du texte de démonstration
-    content: "",
-  })
+    // MODIFIÉ : contenu de départ reçu en prop (vide à la création)
+    content: value,
+    // AJOUTÉ : à chaque modification, on renvoie le HTML au formulaire
+    onUpdate: ({ editor }) => onChangeRef.current?.(editor.getHTML()),
+  });
 
   const rect = useCursorVisibility({
     editor,
     overlayHeight: toolbarRef.current?.getBoundingClientRect().height ?? 0,
-  })
+  });
 
   useEffect(() => {
     if (!isMobile && mobileView !== "main") {
-      setMobileView("main")
+      setMobileView("main");
     }
-  }, [isMobile, mobileView])
+  }, [isMobile, mobileView]);
 
   const openSearchAndReplace = useCallback(() => {
-    setMobileView("main")
-    setIsSearchAndReplaceOpen(true)
-  }, [])
+    setMobileView("main");
+    setIsSearchAndReplaceOpen(true);
+  }, []);
 
   const closeSearchAndReplace = useCallback(() => {
-    setIsSearchAndReplaceOpen(false)
-    searchAndReplaceButtonRef.current?.focus()
-  }, [])
+    setIsSearchAndReplaceOpen(false);
+    searchAndReplaceButtonRef.current?.focus();
+  }, []);
 
   const toggleSearchAndReplace = useCallback(() => {
     if (isSearchAndReplaceOpen) {
-      closeSearchAndReplace()
-      return
+      closeSearchAndReplace();
+      return;
     }
 
-    openSearchAndReplace()
-  }, [closeSearchAndReplace, isSearchAndReplaceOpen, openSearchAndReplace])
+    openSearchAndReplace();
+  }, [closeSearchAndReplace, isSearchAndReplaceOpen, openSearchAndReplace]);
 
   return (
     <div className="simple-editor-wrapper">
@@ -352,5 +363,5 @@ export function SimpleEditor() {
         />
       </EditorContext.Provider>
     </div>
-  )
+  );
 }

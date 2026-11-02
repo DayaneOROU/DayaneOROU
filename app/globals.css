@@ -253,3 +253,13 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 }
+
+
+.editor-sheet .simple-editor-content .tiptap.ProseMirror {
+  color: #1c1b19;
+}
+
+.editor-sheet .simple-editor-content .tiptap :is(p, h2, h3, h4, li, blockquote, label) {
+  color: #1c1b19;
+}
+
