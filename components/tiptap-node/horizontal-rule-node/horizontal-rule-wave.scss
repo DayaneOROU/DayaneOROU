@@ -1,0 +1,10 @@
+// AJOUTÉ : le séparateur dessiné dans l'éditeur. Il remplace le trait du template.
+// Je n'ai pas lu horizontal-rule-node.scss : d'où les !important sur ce qui dessinait l'ancien trait.
+.tiptap.ProseMirror hr,
+.tiptap.ProseMirror [data-type="horizontalRule"] hr {
+  border: none !important; // retire le trait d'origine
+  height: 12px; // hauteur d'une ondulation
+  margin: 0; // l'espacement est géré par le conteneur du template
+  // un motif de 40 px de large qui se répète : une vague ambre (le %23 remplace le # de la couleur)
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='12' viewBox='0 0 40 12'%3E%3Cpath d='M0 6 Q10 0 20 6 T40 6' fill='none' stroke='%23D97706' stroke-width='2.5'/%3E%3C/svg%3E") repeat-x left center !important;
+}

@@ -194,3 +194,121 @@
   padding: 72px 24px 110px;         /* marges autour de l'article */
   min-height: 100vh;                /* le fond couvre toute la hauteur de l'écran */
 }
+
+/* ===== SÉPARATEUR DESSINÉ : remplace le trait horizontal (<hr>) ===== */
+.journal hr {
+  border: 0;                        /* retire le trait par défaut du navigateur */
+  height: 12px;                     /* hauteur de l'ondulation */
+  margin: 48px 0;                   /* respiration avant et après */
+  /* motif de 40 px qui se répète sur toute la largeur : une vague ambre */
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='12' viewBox='0 0 40 12'%3E%3Cpath d='M0 6 Q10 0 20 6 T40 6' fill='none' stroke='%23D97706' stroke-width='2.5'/%3E%3C/svg%3E") repeat-x left center;
+}
+
+/* ===== IMAGE AVEC LÉGENDE (nœud « captioned-image ») ===== */
+.journal figure.captioned-image {
+  margin: 56px 0;                   /* annule la marge par défaut de <figure> et aère */
+  padding: 14px 14px 12px;          /* la « feuille » blanche autour de l'image */
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 18px 36px -16px rgba(28, 27, 25, .35); /* effet « feuille posée » */
+}
+.journal figure.captioned-image[data-tilt="left"]  { transform: rotate(-1deg); } /* penchée à gauche */
+.journal figure.captioned-image[data-tilt="right"] { transform: rotate(1deg); }  /* penchée à droite */
+/* l'image dans la feuille : la règle globale « .journal img » met marge, coins et ombre, on les neutralise */
+.journal figure.captioned-image img {
+  margin: 0;
+  border-radius: 4px;
+  box-shadow: none;
+}
+.journal figure.captioned-image figcaption {
+  margin-top: 12px;
+  font-family: var(--font-hand), cursive; /* Caveat */
+  font-size: 30px;
+  line-height: 1.1;
+  text-align: center;
+  color: #1c1b19;
+}
+.journal figure.captioned-image figcaption:empty { display: none; } /* pas de légende : pas d'espace réservé */
+
+/* ===== BOUTONS « VOIR LE CODE » / « VOIR LA DÉMO » ===== */
+.journal .project-links {
+  display: flex;
+  flex-wrap: wrap;                  /* sur mobile, le 2e bouton passe dessous */
+  gap: 14px;
+  margin: 32px 0;
+}
+.journal .project-links .btn {
+  display: inline-block;
+  padding: 12px 20px;
+  border: 2px solid #141413;
+  border-radius: 10px;
+  font-family: var(--font-title), "Archivo Black", sans-serif; /* à ajuster si votre variable s'appelle autrement */
+  font-size: 15px;
+  text-decoration: none;            /* pas de soulignement de lien */
+  transition: transform .15s;
+}
+.journal .project-links .btn:hover { transform: translateY(-2px); } /* petit soulèvement au survol */
+.journal .project-links .btn-code { background: #141413; color: #F8F4EA; } /* bouton plein */
+.journal .project-links .btn-demo { background: transparent; color: #141413; } /* bouton contour */
+
+
+/* ===== TABLEAU (extension officielle TipTap : <table><tbody><tr><th|td><p>) ===== */
+.journal table {
+  border-collapse: collapse;        /* filets collés, sans double bordure */
+  table-layout: fixed;              /* colonnes de largeur égale */
+  width: 100%;
+  margin: 40px 0;
+  font-size: 16px;
+}
+.journal th,
+.journal td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #e4dfd2; /* filet fin entre les lignes */
+  text-align: left;
+  vertical-align: top;
+}
+.journal th {                       /* ligne d'en-tête : petites capitales espacées, filet doré dessous */
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #6b6558;
+  border-bottom: 1.5px solid #E7D49C;
+}
+.journal th > p,
+.journal td > p { margin: 0; }      /* TipTap met un <p> dans chaque cellule */
+@media (max-width: 600px) {         /* petit écran : le tableau défile au lieu de déborder */
+  .journal table { display: block; overflow-x: auto; }
+}
+
+/* ===== BLOC TERMINAL (nœud « terminal ») ===== */
+.journal .terminal {
+  margin: 40px 0;
+  border-radius: 10px;
+  overflow: hidden;                 /* coins arrondis aussi pour la barre */
+  background: #141413;              /* fond sombre */
+  box-shadow: 0 18px 36px -16px rgba(20, 20, 19, .5);
+}
+.journal .terminal .t-bar {         /* barre du haut avec les 3 pastilles */
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 30px;
+  padding: 0 14px;
+  background: #232322;
+}
+.journal .terminal .t-dot { width: 11px; height: 11px; border-radius: 50%; }
+.journal .terminal .t-dot:nth-child(1) { background: #ff5f57; }
+.journal .terminal .t-dot:nth-child(2) { background: #febc2e; }
+.journal .terminal .t-dot:nth-child(3) { background: #28c840; }
+.journal .terminal pre {
+  margin: 0;
+  padding: 16px 20px;
+  color: #e8e4d8;                   /* texte clair */
+  font-family: var(--font-mono), "DM Mono", ui-monospace, monospace; /* à ajuster si votre variable s'appelle autrement */
+  font-size: 15px;
+  line-height: 1.7;
+  white-space: pre;                 /* les commandes ne passent pas à la ligne */
+  overflow-x: auto;                 /* défilement horizontal si une ligne est trop longue */
+}
+.journal .terminal code { background: none; padding: 0; color: inherit; font: inherit; }

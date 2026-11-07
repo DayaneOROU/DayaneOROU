@@ -76,9 +76,9 @@ export function slugify(text: string): string {
     .toLowerCase()
     .normalize('NFD')                    // décompose les accents : é → e + ´
     .replace(/[\u0300-\u036f]/g, '')     // supprime les accents
-    .replace(/[^a-z0-9\s-]/g, '')       // supprime les caractères spéciaux
-    .replace(/\s+/g, '-')               // remplace les espaces par des tirets
-    .replace(/-+/g, '-')                // évite les double tirets
-    .trim()
+    .replace(/[^a-z0-9\s-]/g, '')        // supprime les caractères spéciaux
+    .replace(/\s+/g, '-')                // remplace les espaces par des tirets
+    .replace(/-+/g, '-')                 // compresse les tirets multiples
+    .replace(/^-+|-+$/g, '')             // MODIFIÉ : retire les tirets en début et fin (remplace trim())
 }
 

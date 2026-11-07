@@ -1,0 +1,25 @@
+// AJOUTÉ : style des boutons DANS L'ÉDITEUR (copie des règles de journal.css).
+.tiptap.ProseMirror .project-links {
+  display: flex;
+  flex-wrap: wrap; // sur petit écran, le 2e bouton passe dessous
+  gap: 14px;
+  margin: 28px 0;
+
+  .btn {
+    display: inline-block;
+    padding: 12px 20px;
+    border: 2px solid #141413;
+    border-radius: 10px;
+    font-family: var(--font-title), "Archivo Black", sans-serif; // à ajuster si votre variable s'appelle autrement
+    font-size: 15px;
+    text-decoration: none;
+    pointer-events: none; // dans l'éditeur, un clic sélectionne le bloc au lieu d'ouvrir le lien
+  }
+  .btn-code { background: #141413; color: #f8f4ea; } // bouton plein
+  .btn-demo { background: transparent; color: #141413; } // bouton contour
+
+  &.ProseMirror-selectednode { // sélectionné : contour ambre
+    outline: 2px solid #d97706;
+    outline-offset: 8px;
+  }
+}

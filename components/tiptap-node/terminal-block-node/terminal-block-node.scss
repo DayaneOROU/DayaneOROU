@@ -1,0 +1,47 @@
+// AJOUTÉ : style du Bloc terminal DANS L'ÉDITEUR (copie des règles de journal.css, à unifier à l'étape 7).
+.tiptap.ProseMirror .terminal {
+  margin: 36px 0;
+  border-radius: 10px;
+  overflow: hidden; // coins arrondis aussi pour la barre
+  background: #141413; // fond sombre
+  box-shadow: 0 18px 36px -16px rgba(20, 20, 19, 0.5);
+
+  .t-bar { // barre du haut avec les 3 pastilles
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    height: 30px;
+    padding: 0 14px;
+    background: #232322;
+  }
+  .t-dot { // les 3 pastilles
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    &:nth-child(1) { background: #ff5f57; }
+    &:nth-child(2) { background: #febc2e; }
+    &:nth-child(3) { background: #28c840; }
+  }
+
+  // le <pre> : on neutralise le style « bloc de code » du template (fond, bordure, marges)
+  pre {
+    margin: 0;
+    padding: 16px 20px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    color: #e8e4d8; // texte clair
+    font-family: var(--font-mono), "DM Mono", ui-monospace, monospace; // à ajuster si votre variable s'appelle autrement
+    font-size: 15px;
+    line-height: 1.7;
+    white-space: pre; // les commandes ne passent pas à la ligne
+    overflow-x: auto; // défilement horizontal si une ligne est trop longue
+    min-height: 3.4em; // un terminal vide reste visible et cliquable
+  }
+  pre code { // idem pour le <code> intérieur
+    background: none;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+  }
+}

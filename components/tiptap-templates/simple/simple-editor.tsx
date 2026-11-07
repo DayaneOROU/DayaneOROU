@@ -85,6 +85,29 @@ import "@/components/tiptap-templates/simple/simple-editor.scss";
 
 // RETIRÉ : import content from ".../data/content.json" (le texte de démonstration)
 
+// AJOUTÉ : le nœud Capture, son style dans l'éditeur, et le menu « + Insérer »
+import { BrowserShot } from "@/components/tiptap-extension/browser-shot-extension";
+import "@/components/tiptap-node/browser-shot-node/browser-shot-node.scss";
+import { InsertDropdownMenu } from "@/components/tiptap-ui/insert-dropdown-menu/insert-dropdown-menu";
+
+// AJOUTÉ : la Note en marge, son style éditeur, et le séparateur dessiné
+// (l'import du séparateur reste APRÈS horizontal-rule-node.scss du template, sinon l'ancien trait gagne)
+import { MarginNote } from "@/components/tiptap-extension/margin-note-extension";
+import "@/components/tiptap-node/margin-note-node/margin-note-node.scss";
+import "@/components/tiptap-node/horizontal-rule-node/horizontal-rule-wave.scss";
+
+// AJOUTÉ : l'Image avec légende et les Boutons de projet (extensions + styles éditeur)
+import { CaptionedImage } from "@/components/tiptap-extension/captioned-image-extension";
+import "@/components/tiptap-node/captioned-image-node/captioned-image-node.scss";
+import { ProjectLinks } from "@/components/tiptap-extension/project-links-extension";
+import "@/components/tiptap-node/project-links-node/project-links-node.scss";
+
+// AJOUTÉ : le Tableau (extension officielle) et le Bloc terminal (extension + styles éditeur)
+import { TableKit } from "@tiptap/extension-table";
+import "@/components/tiptap-node/table-node/table-node.scss";
+import { TerminalBlock } from "@/components/tiptap-extension/terminal-block-extension";
+import "@/components/tiptap-node/terminal-block-node/terminal-block-node.scss";
+
 const SEARCH_AND_REPLACE_SCROLL_OPTIONS: ScrollIntoViewOptions = {
   block: "center",
 };
@@ -188,6 +211,8 @@ const MainToolbarContent = ({
 
       <ToolbarGroup>
         <ImageUploadButton text="Add" />
+        {/* AJOUTÉ : menu « + Insérer » (Capture pour l'instant) */}
+        <InsertDropdownMenu modal={false} />
       </ToolbarGroup>
 
       <Spacer />
@@ -267,6 +292,12 @@ export function SimpleEditor({ value = "", onChange }: SimpleEditorProps) {
       // MODIFIÉ : multicolor true -> false. Le <mark> n'embarque plus de couleur en dur :
       // elle vient du thème de l'article
       Highlight.configure({ multicolor: false }),
+      BrowserShot,
+      MarginNote,
+      CaptionedImage, // AJOUTÉ : l'Image avec légende (priorité haute, donc avant Image)
+      ProjectLinks, // AJOUTÉ : les Boutons code / démo
+      TableKit.configure({ table: { resizable: false } }),
+      TerminalBlock, // AJOUTÉ : le Bloc terminal
       Image,
       // RETIRÉ : Typography
       Superscript,

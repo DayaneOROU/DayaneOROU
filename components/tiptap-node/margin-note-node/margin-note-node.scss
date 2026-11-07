@@ -1,0 +1,23 @@
+// AJOUTÉ : style de la note DANS L'ÉDITEUR. Elle flotte à droite et le texte s'enroule autour, sans déborder.
+// (Dans journal.css elle sort dans la marge grâce à une marge négative : ça se verra avec la page publique.)
+.tiptap.ProseMirror .margin-note {
+  float: right; // sort du flux et se range à droite
+  clear: right; // deux notes ne se chevauchent jamais
+  width: 210px;
+  margin: 4px 0 8px 24px;
+  min-height: 1.15em; // une note vide reste visible et cliquable
+  font-family: var(--font-hand), "Caveat", cursive; // manuscrit, avec repli si la variable n'existe pas ici
+  font-size: 25px;
+  line-height: 1.15;
+  color: #b45309; // ambre foncé, comme journal.css
+  transform: rotate(2deg); // légèrement penchée
+  outline: 1px dashed rgba(180, 83, 9, 0.35); // aide visuelle ÉDITEUR SEULEMENT : on voit les limites de la note
+  outline-offset: 4px;
+
+  @media (max-width: 700px) { // petit écran : la note repasse sous le texte
+    float: none;
+    width: auto;
+    margin: 6px 0 14px;
+    transform: none;
+  }
+}

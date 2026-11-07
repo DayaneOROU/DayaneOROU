@@ -1,0 +1,37 @@
+// AJOUTÉ : style du Tableau DANS L'ÉDITEUR (copie des règles de journal.css).
+.tiptap.ProseMirror table {
+  border-collapse: collapse; // filets collés, sans double bordure
+  table-layout: fixed; // colonnes de largeur égale
+  width: 100%;
+  margin: 32px 0;
+  font-size: 16px;
+
+  th,
+  td {
+    position: relative; // repère pour la surbrillance des cellules sélectionnées
+    padding: 12px 10px;
+    border-bottom: 1px solid #e4dfd2; // filet fin entre les lignes
+    text-align: left;
+    vertical-align: top;
+    min-width: 80px;
+  }
+
+  th { // la ligne d'en-tête : petites capitales espacées, filet doré dessous
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6b6558;
+    border-bottom: 1.5px solid #e7d49c;
+  }
+
+  p { margin: 0; } // TipTap met un <p> dans chaque cellule : on retire sa marge
+
+  .selectedCell::after { // cellules sélectionnées (glisser sur plusieurs cellules) : voile ambre
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(217, 119, 6, 0.12);
+    pointer-events: none; // le voile ne bloque pas les clics
+  }
+}

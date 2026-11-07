@@ -41,7 +41,8 @@ export async function getBlogBySlug(slug: string) {
     `,
     )
     .eq("slug", slug)
-    .single();
+    .eq("published", true) 
+    .maybeSingle();
 
   if (error) throw new Error(error.message);
   return data;

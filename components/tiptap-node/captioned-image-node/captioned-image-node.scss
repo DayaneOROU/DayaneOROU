@@ -1,0 +1,37 @@
+// AJOUTÉ : style de l'Image avec légende DANS L'ÉDITEUR (copie des règles de journal.css, à unifier à l'étape 7).
+.tiptap.ProseMirror figure.captioned-image {
+  position: relative;
+  margin: 48px 0; // espace autour (annule la marge par défaut de <figure>)
+  padding: 14px 14px 12px; // la « feuille » blanche autour de l'image
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 18px 36px -16px rgba(28, 27, 25, 0.35);
+  transition: transform 0.2s;
+
+  &[data-tilt="left"] { transform: rotate(-1deg); } // penchée à gauche
+  &[data-tilt="right"] { transform: rotate(1deg); } // penchée à droite
+
+  img { // l'image : on neutralise les styles d'image du template (marge, coins, ombre)
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    border-radius: 4px;
+    box-shadow: none;
+  }
+
+  figcaption { // la légende manuscrite
+    margin-top: 12px;
+    font-family: var(--font-hand), "Caveat", cursive;
+    font-size: 30px;
+    line-height: 1.1;
+    text-align: center;
+    color: #1c1b19;
+    &:empty { display: none; } // pas de légende : on ne réserve pas d'espace
+  }
+
+  &.ProseMirror-selectednode { // sélectionnée : contour ambre
+    outline: 2px solid #d97706;
+    outline-offset: 8px;
+  }
+}
