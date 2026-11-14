@@ -12,7 +12,7 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/banner-action.gif" />
     <source media="(prefers-color-scheme: light)" srcset="assets/banner-pose.gif" />
-    <img src="assets/banner-pose.gif" alt="Bannière Iron Man" width="480" />
+    <img src="assets/banner-pose.gif" alt="Bannière Iron Man" width="640" />
   </picture>
 
   <br />
